@@ -1,12 +1,25 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
+}
+
+model Node {
+  id         Int        @id @default(autoincrement())
+  name       String
+  parentId   Int?
+  parent     Node?      @relation("NodeToChildren", fields: [parentId], references: [id])
+  children   Node[]     @relation("NodeToChildren")
+  properties Property[]
+}
+
+model Property {
+  id     Int     @id @default(autoincrement())
+  key    String
+  value  Float
+  node   Node    @relation(fields: [nodeId], references: [id])
+  nodeId Int
 }
